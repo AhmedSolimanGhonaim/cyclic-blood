@@ -23,8 +23,8 @@ class BloodType(models.TextChoices):
 
 class Stock(models.Model):
     id = models.AutoField(primary_key=True)
-    donation = models.ForeignKey(
-        Donation, on_delete=models.SET_NULL, null=True, blank=True, unique=True,related_name='stock')
+    donation = models.OneToOneField(
+        Donation, on_delete=models.SET_NULL, null=True, blank=True, related_name='stock')
     blood_type = models.CharField(
         max_length=3,
         choices=BloodType.choices

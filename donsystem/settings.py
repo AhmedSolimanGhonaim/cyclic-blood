@@ -28,6 +28,15 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'rest_framework',
     'donor', 
+    'donation',
+    'bloodstock',
+    'matchersystem',
+    'notification',
+    'bloodbank',
+    'hospital',
+    'bloodrequests',
+   
+
 ]
 
 MIDDLEWARE = [
