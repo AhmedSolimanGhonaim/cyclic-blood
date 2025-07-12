@@ -1,3 +1,14 @@
+
+# Cyclic Blood Donation System
+
+Welcome to **Cyclic Blood**, a blood donation system developed by Ahmed Soliman Ghonaim.
+
+- **Root Directory:** `dono system`
+
+---
+
+## Entity Relationship Diagram
+
 ```mermaid
 erDiagram
     DONOR {
@@ -15,7 +26,6 @@ erDiagram
         datetime created_at
         datetime updated_at
     }
-    
     BLOOD_BANK {
         int id PK
         string name
@@ -25,7 +35,6 @@ erDiagram
         string operating_hours
         datetime created_at
     }
-    
     DONATION {
         int id PK
         int donor_id FK
@@ -40,7 +49,6 @@ erDiagram
         datetime created_at
         datetime updated_at
     }
-    
     STOCK {
         int id PK
         int donation_id FK
@@ -48,7 +56,6 @@ erDiagram
         datetime created_at
         datetime updated_at
     }
-    
     HOSPITAL {
         int id PK
         string name
@@ -58,7 +65,6 @@ erDiagram
         string contact_person
         datetime created_at
     }
-    
     REQUEST {
         int id PK
         int hospital_id FK
@@ -72,7 +78,6 @@ erDiagram
         datetime created_at
         datetime updated_at
     }
-    
     MATCHER {
         int id PK
         int request_id FK
@@ -81,7 +86,6 @@ erDiagram
         decimal match_score
         datetime created_at
     }
-    
     NOTIFICATION {
         int id PK
         int donor_id FK
@@ -93,7 +97,6 @@ erDiagram
         boolean seen
         datetime created_at
     }
-    
     DONOR ||--o{ DONATION : "makes"
     BLOOD_BANK ||--o{ DONATION : "collects"
     DONATION ||--|| STOCK : "becomes"
@@ -103,3 +106,6 @@ erDiagram
     DONOR ||--o{ NOTIFICATION : "receives"
     DONATION ||--o{ NOTIFICATION : "about"
 ```
+
+---
+
