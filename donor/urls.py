@@ -1,10 +1,12 @@
 from rest_framework.routers import DefaultRouter
 from .views import DonorViewSet ,DonorProfile
-from django.urls import path , include
+from django.urls import path 
+
+
 router = DefaultRouter()
-router.register(r'donors', DonorViewSet, basename='donor')
+router.register(r'', DonorViewSet, basename='donor')
+
 urlpatterns = [
-    path('/donor/', include(router.urls)),
-    path('/donor/profile/', DonorProfile.as_view(), name='donor-profile'),
+    path('me/', DonorProfile.as_view(), name='donor-profile'),
 ]
 urlpatterns += router.urls
