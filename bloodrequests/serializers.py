@@ -1,27 +1,31 @@
 from rest_framework import serializers
 from .models import BloodRequests
+from patient.models import Patient
 
 
 class BloodRequestSerializer(serializers.ModelSerializer):
-  
-        """   to secure patient data, I will not include patient in the serializer
-       but I will allow it to be set when creating a request
-       this way, I can still link the request to a patient without exposing patient data
-          """
-        patient = serializers.PrimaryKeyRelatedField( queryset=BloodRequests._meta.get_field('patient').related_model.objects.all(), required=False, write_only=True )
+    """
+    Secure patient data:
+    - `patient`: write-only → accepted in request, hidden in response
+    - `blood_type` and `priority`: auto-set from the patient
+    """
+    patient = serializers.PrimaryKeyRelatedField(
+        queryset=Patient.objects.all(),
+        required=False,
+        write_only=True
+    )
 
-        class Meta:
-            model = BloodRequests
-            exclude = ['hospital']
-            read_only_fields = ['id', 'requested_at', 'updated_at']
-            extra_kwargs = {
-                'status': {'required': False, 'default': 'pending'},
-                'priority': {'required': False, 'default': 'normal'},
-            }
+    blood_type = serializers.CharField(read_only=True)  
 
-        def create(self, validated_data):
-            patient = validated_data.get('patient')
-            if patient:
-                validated_data['blood_type'] = patient.blood_type
-                validated_data['priority'] = patient.status
-            return super().create(validated_data)
+    class Meta:
+        model = BloodRequests
+        exclude = ['hospital']  # we set this from the view
+        read_only_fields = ['id', 'requested_at', 'updated_at']
+
+    def create(self, validated_data):
+        patient = validated_data.pop('patient', None)
+        if patient:
+            validated_data['blood_type'] = patient.blood_type
+            validated_data['priority'] = patient.status
+            validated_data['patient'] = patient
+        return super().create(validated_data)

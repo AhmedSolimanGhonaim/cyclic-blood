@@ -17,7 +17,7 @@ from rest_framework.response import Response
 class HospitalViewSet(ModelViewSet):
     queryset = Hospital.objects.all()
     serializer_class = HospitalSerializer
-    permission_classes = [IsAdminUser]
+    permission_classes = [IsAuthenticated | IsAdminUser]
 
 class HospitalProfile(APIView):
     permission_classes = [IsAuthenticated]    
