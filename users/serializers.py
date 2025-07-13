@@ -9,7 +9,10 @@ from hospital.models import Hospital
 class CustomUserSerializer(serializers.ModelSerializer):
     class Meta: 
         model = CustomUser
-        fields = ['id', 'username', 'password', 'email', 'role', 'city']
+        fields = ['id', 'username', 'password','email', 'role', 'city']
+        extra_kwargs = {
+            'password': {'write_only': True}
+        }
     def create(self, validated_data):
         password = validated_data.pop('password')
         user = CustomUser(**validated_data)
