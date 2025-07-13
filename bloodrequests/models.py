@@ -1,20 +1,10 @@
 from django.db import models
-
-# Create your models here.
+from patient.models import Patient
 
 class BloodRequests(models.Model):
     id = models.AutoField(primary_key=True)
-    blood_type = models.CharField(max_length=3, choices=[
-        ('A+', 'A Positive'),
-        ('A-', 'A Negative'),
-        ('B+', 'B Positive'),
-        ('B-', 'B Negative'),
-        ('AB+', 'AB Positive'),
-        ('AB-', 'AB Negative'),
-        ('O+', 'O Positive'),
-        ('O-', 'O Negative')
-    ])
-    hospital_id = models.ForeignKey('hospital.Hospital',on_delete=models.SET_NULL, null=True, blank=True, related_name='blood_requests')
+    
+    hospital= models.ForeignKey('hospital.Hospital',on_delete=models.SET_NULL, null=True, blank=True, related_name='blood_requests')
     status = models.CharField(max_length=20, choices=[
         ('pending', 'Pending'),
         ('fulfilled', 'Fulfilled'),
@@ -27,7 +17,7 @@ class BloodRequests(models.Model):
     ], default='normal')
     
     updated_at = models.DateTimeField(auto_now=True)
-    
+    patient = models.ForeignKey('patient.Patient', on_delete=models.SET_NULL, null=True, blank=True, related_name='blood_requests')
 
     quantity = models.PositiveIntegerField(null=False, blank=False, default=1)
     requested_at = models.DateTimeField(auto_now_add=True)

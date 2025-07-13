@@ -26,4 +26,6 @@ class DonorViewSet(ModelViewSet):
     queryset = Donor.objects.all()
     serializer_class = DonorSerializer
     
-    
+
+
+# class Donate
