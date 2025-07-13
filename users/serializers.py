@@ -1,11 +1,11 @@
 from rest_framework import serializers
-
-
 from .models import CustomUser
 from donor.serializers import DonorSerializer
 from hospital.serializers import HospitalSerializer
 from donor.models import Donor
 from hospital.models import Hospital
+
+
 class CustomUserSerializer(serializers.ModelSerializer):
     class Meta: 
         model = CustomUser
@@ -18,21 +18,23 @@ class CustomUserSerializer(serializers.ModelSerializer):
         return user
     
     
-    
 class RegistrationSerializer(serializers.Serializer):
     user = CustomUserSerializer()
     donor_profile = DonorSerializer(required=False)
     hospital_profile = HospitalSerializer(required=False)
-    
-    
+
     def create(self, validated_data):
         user_data = validated_data.pop('user')
-        role = user_data.get('role')
-        user = CustomUser.objects.create(user_data)
-        if role == 'donor':
-            Donor.objects.create(user=user, **validated_data['donor_profile'])
-        elif role == 'hospital':
-            Hospital.objects.create(
-                user=user, **validated_data['hospital_profile'])
+        donor_data = validated_data.pop('donor_profile', None)
+        hospital_data = validated_data.pop('hospital_profile', None)
+
+        user_serializer = CustomUserSerializer(data=user_data)
+        user_serializer.is_valid(raise_exception=True)
+        user = user_serializer.save()
+
+        if user.role == 'donor' and donor_data:
+            Donor.objects.create(user=user, **donor_data)
+        elif user.role == 'hospital' and hospital_data:
+            Hospital.objects.create(user=user, **hospital_data)
 
         return user
