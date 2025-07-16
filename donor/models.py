@@ -19,8 +19,17 @@ class Donor(models.Model):
     phone = models.CharField(max_length=20, blank=True)
     total_donations = models.IntegerField(default=0)
     updated_at = models.DateTimeField(auto_now=True)
-  
-    def save(self,*args,**kwargs):
+    
+    
+    @property
+    def days_until_next_donation(self):
+        """Return days left until donor can donate again."""
+        if self.last_donation_date:
+            days_passed = (date.today() - self.last_donation_date).days
+            return max(0, 90 - days_passed)
+        return 0
+
+    def save(self, *args, **kwargs):
         """ can donate manipulation  """
         if self.last_donation_date:
             days_passed = (date.today()-self.last_donation_date).days

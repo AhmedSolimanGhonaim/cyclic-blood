@@ -4,7 +4,7 @@ from django.contrib.auth import get_user_model
 
 User = get_user_model()
 
-
+from enum import Enum 
 
 class Hospital(models.Model):
     user = models.OneToOneField(User, related_name='hospital_profile', on_delete=models.SET_NULL, null=True, blank=True)

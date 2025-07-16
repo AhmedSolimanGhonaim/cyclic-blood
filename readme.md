@@ -131,7 +131,6 @@ for testing register donor
 "donor_profile": {
 "national_id": "12345678901234",
 "name": "Ahmed Donor",
-"email": "donor1@example.com",
 "city": "Cairo",
 "phone": "01012345678"
 }
