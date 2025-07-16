@@ -1,6 +1,6 @@
 
 from django.contrib import admin
-from django.urls import path , include
+from django.urls import path, include
 
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -10,7 +10,8 @@ urlpatterns = [
     path('api/bloodrequests/', include('bloodrequests.urls')),
     path('api/patient/', include('patient.urls')),
     path('api/donation/', include('donation.urls')),
-    path('api/bloodbank/',include('bloodbank.urls')),
-    path('api/stock/', include('bloodstock.urls'))
+    path('api/bloodbank/', include('bloodbank.urls')),
+    path('api/stock/', include('bloodstock.urls')),
+    path('api/matcher/', include('matchersystem.urls'))
     # path('api/auth/', include('rest_framework.urls')),
 ]

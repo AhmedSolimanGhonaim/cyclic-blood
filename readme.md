@@ -152,3 +152,23 @@ for testing register hospital
 "phone": "01098765432"
 }
 }
+
+
+<!-- adding a patient example-->
+register as hospital and then /api/patient/ method post 
+{
+    "name": "mo7sens",
+    "age":30,
+    "blood_type": "O-"
+    
+}
+
+<!-- view bloodrequests  -->
+/bloodrequests/ method get 
+
+<!-- add  blood requests -->
+/bloodrequests/ method post
+
+
+
+<!-- ordering is by  fifo created_at-->

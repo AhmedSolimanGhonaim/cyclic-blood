@@ -6,6 +6,10 @@ from rest_framework.permissions import IsAuthenticated, IsAdminUser
 from rest_framework.response import Response
 from rest_framework import status
 
+from matchersystem.services import match_blood_request ,batch_match_requests
+
+
+
 
 class BloodRequestCreateView(APIView):
     permission_classes = [IsAuthenticated]
@@ -18,11 +22,13 @@ class BloodRequestCreateView(APIView):
             return Response({"error": "You must be a hospital to create a blood request."}, status=status.HTTP_403_FORBIDDEN)
         serializer= BloodRequestSerializer(data=request.data)
         if serializer.is_valid():
-            serializer.save(hospital=hospital)
+            blood_request = serializer.save(hospital=hospital)
+            match_blood_request(blood_request)
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-
+        
+        
 
 class BloodRequestListView(APIView):
     #  i added [is authenticated] here since i think we need to allow all users to see the blood requests
@@ -34,4 +40,9 @@ class BloodRequestListView(APIView):
         return Response(serializer.data, status=status.HTTP_200_OK)
     
     
-    
+class BatchMatchView(APIView):
+    permission_classes = [IsAdminUser]
+
+    def post(self, request):
+        result = batch_match_requests()
+        return Response(result)

@@ -19,11 +19,15 @@ class BloodRequestSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = BloodRequests
-        exclude = ['hospital']  # we set this from the view
+        exclude = ['hospital']  
         read_only_fields = ['id', 'requested_at', 'updated_at']
 
     def create(self, validated_data):
         patient = validated_data.pop('patient', None)
+        if not patient:
+           raise serializers.ValidationError(
+                "Patient is required to infer blood type and priority.")
+
         if patient:
             validated_data['blood_type'] = patient.blood_type
             validated_data['priority'] = patient.status

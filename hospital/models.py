@@ -17,7 +17,7 @@ class Hospital(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
-        return f"{self.name} - {self.city}"
+        return f"{self.name} - {self.user.city}"
     def get_nearest_blood_bank(self):
         """
         Placeholder for a method to get the nearest blood bank.

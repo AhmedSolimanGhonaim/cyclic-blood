@@ -42,7 +42,11 @@ class Stock(models.Model):
     bank= models.ForeignKey("bloodbank.BloodBank", null=True,blank=True, on_delete=models.SET_NULL)
     city = models.CharField(max_length=100, blank=True)
 
-
+    @classmethod
+    def count_available_blood(cls):
+         stocks= cls.objects.filter(status=StockStatus.AVAILABLE,donation__expiration_date__gt=models.functions.Now())
+         total = stocks.values('blood_type').annotate(total=Sum('quantity'))
+         return {entry['blood_type']:entry['total'] for entry in total}
     @classmethod
     def count_available_blood_by_city(cls):
         stocks = cls.objects.filter(
@@ -50,7 +54,7 @@ class Stock(models.Model):
             donation__expiration_date__gt=models.functions.Now()
         )
         total = stocks.values('city', 'blood_type').annotate(total=Sum('quantity'))
-
+        
         result = {}
         for entry in total:
             city = entry['city']
@@ -71,11 +75,16 @@ class Stock(models.Model):
                 self.quantity = self.donation.quantity_ml
             if self.donation and self.donation.bank:
                 self.bank =self.donation.bank
-                self.city =self.donation.bank.city
-                
-         
+                self.city =self.donation.bank.city  
         super().save(*args, **kwargs)
-            
+
+    def mark_used(self, amount):
+        self.quantity -= amount
+        if self.quantity <= 0:
+            self.quantity = 0
+            self.status = StockStatus.USED
+        self.save()
+                
     def __str__(self):
         return f"Stock {self.id} - {self.blood_type} - {self.status}"
 

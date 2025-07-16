@@ -4,7 +4,7 @@ from donor.serializers import DonorSerializer
 from hospital.serializers import HospitalSerializer
 from donor.models import Donor
 from hospital.models import Hospital
-
+import re
 
 class CustomUserSerializer(serializers.ModelSerializer):
     class Meta: 
@@ -13,6 +13,14 @@ class CustomUserSerializer(serializers.ModelSerializer):
         extra_kwargs = {
             'password': {'write_only': True}
         }
+        
+    def validate_password(self,value):
+        # Must be 8+ chars, include upper/lowercase and number
+        if not re.match(r'^(?=.*[A-Z])(?=.*\d)[A-Za-z\d@#$%^&+=]{8,}$', value):
+            raise serializers.ValidationError(
+                "Password must be at least 8 characters long, contain one uppercase letter and one number."
+            )
+        return value
     def create(self, validated_data):
         password = validated_data.pop('password')
         user = CustomUser(**validated_data)

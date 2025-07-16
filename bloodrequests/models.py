@@ -15,7 +15,7 @@ class BloodRequests(models.Model):
         ('normal', 'Normal'),
         ('urgent', 'Urgent')
     ], default='normal')
-    
+    city = models.CharField(max_length=100) 
     updated_at = models.DateTimeField(auto_now=True)
     patient = models.ForeignKey('patient.Patient', on_delete=models.SET_NULL, null=True, blank=True, related_name='blood_requests')
 
