@@ -10,6 +10,13 @@ Welcome to **Cyclic Blood**, a blood donation system developed by Ahmed Soliman 
 
 ```mermaid
 erDiagram
+    USER {
+        int id PK
+        string username
+        string email
+        string role "donor, hospital, bank_employee"
+        string city
+    }
     DONOR {
         int id PK
         string national_id UK
@@ -30,10 +37,15 @@ erDiagram
         string phone
         datetime created_at
     }
+    BANK_EMPLOYEE {
+        int id PK
+        int user_id FK
+        int blood_bank_id FK
+    }
     DONATION {
         int id PK
         int donor_id FK
-        int blood_bank_id FK
+        int bank_id FK "FK to BLOOD_BANK"
         date donation_date
         bool virus_test_result
         string blood_type
@@ -47,6 +59,9 @@ erDiagram
         int donation_id FK
         string blood_type
         string status
+        int quantity
+        int bank_id FK "FK to BLOOD_BANK"
+        string city
         datetime created_at
         datetime updated_at
     }
@@ -94,15 +109,11 @@ erDiagram
         int donation_id FK
         int donor_id FK
     }
-    USER {
-        int id PK
-        string username
-        string email
-        string role
-        string city
-    }
+
     USER ||--o{ DONOR : "profile"
     USER ||--o{ HOSPITAL : "profile"
+    USER ||--o{ BANK_EMPLOYEE : "profile"
+    BANK_EMPLOYEE }o--|| BLOOD_BANK : "works_at"
     DONOR ||--o{ DONATION : "makes"
     BLOOD_BANK ||--o{ DONATION : "collects"
     DONATION ||--|| STOCK : "becomes"
@@ -113,6 +124,7 @@ erDiagram
     STOCK ||--o{ MATCHER : "matched_in"
     DONOR ||--o{ NOTIFICATION : "receives"
     DONATION ||--o{ NOTIFICATION : "about"
+    BLOOD_BANK ||--o{ STOCK : "has"
 ```
 
 ---

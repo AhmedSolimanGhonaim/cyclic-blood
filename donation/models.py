@@ -16,7 +16,6 @@ class BloodType(models.TextChoices):
     O_POS = 'O+', 'O Positive'
     O_NEG = 'O-', 'O Negative'
 
-
 class DonationStatus(models.TextChoices):
     PENDING = 'pending', 'Pending'
     REJECTED_VIRUS = 'rejected_virus', 'Rejected (Virus Positive)'

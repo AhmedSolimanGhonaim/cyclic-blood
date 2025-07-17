@@ -10,6 +10,7 @@ class CustomUser(AbstractUser):
     ROLE_CHOICES = (
         ('donor', 'Donor'),
         ('hospital', 'Hospital'),  
+        ('bank_employee', 'Blood Bank'),
     )
     
     email = models.EmailField(unique=True)

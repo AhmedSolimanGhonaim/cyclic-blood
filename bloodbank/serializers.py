@@ -1,5 +1,11 @@
 from rest_framework import serializers
 from .models import BloodBank
+from .models import BankEmployee
+
+class BankEmployeeSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = BankEmployee
+        fields = ['blood_bank']
 
 
 

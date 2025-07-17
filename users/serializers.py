@@ -1,10 +1,13 @@
 from rest_framework import serializers
+from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 from .models import CustomUser
 from donor.serializers import DonorSerializer
 from hospital.serializers import HospitalSerializer
 from donor.models import Donor
 from hospital.models import Hospital
 import re
+from bloodbank.serializers import BankEmployeeSerializer
+from bloodbank.models import BankEmployee
 
 class CustomUserSerializer(serializers.ModelSerializer):
     class Meta: 
@@ -33,11 +36,12 @@ class RegistrationSerializer(serializers.Serializer):
     user = CustomUserSerializer()
     donor_profile = DonorSerializer(required=False)
     hospital_profile = HospitalSerializer(required=False)
-
+    bank_employee_profile = BankEmployeeSerializer(required=False)
     def create(self, validated_data):
         user_data = validated_data.pop('user')
         donor_data = validated_data.pop('donor_profile', None)
         hospital_data = validated_data.pop('hospital_profile', None)
+        bank_employee_data = validated_data.pop('bank_employee_profile', None)
 
         user_serializer = CustomUserSerializer(data=user_data)
         user_serializer.is_valid(raise_exception=True)
@@ -47,5 +51,18 @@ class RegistrationSerializer(serializers.Serializer):
             Donor.objects.create(user=user, **donor_data)
         elif user.role == 'hospital' and hospital_data:
             Hospital.objects.create(user=user, **hospital_data)
-
+        elif user.role == 'bank_employee' and bank_employee_data:
+            BankEmployee.objects.create(user=user, **bank_employee_data)
         return user
+
+class UserLoginResponseSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = CustomUser
+        fields = ['id', 'username', 'email', 'role', 'city']
+
+class MyTokenObtainPairSerializer(TokenObtainPairSerializer):
+    def validate(self, attrs):
+        data = super().validate(attrs)
+        serializer = UserLoginResponseSerializer(self.user)
+        data['user'] = serializer.data
+        return data

@@ -19,8 +19,8 @@ class BloodRequestSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = BloodRequests
-        exclude = ['hospital']  
-        read_only_fields = ['id', 'requested_at', 'updated_at']
+        fields = ['id', 'patient', 'quantity', 'city', 'status', 'priority', 'blood_type', 'requested_at', 'updated_at']
+        read_only_fields = ['id', 'requested_at', 'updated_at', 'blood_type', 'priority', 'status']
 
     def create(self, validated_data):
         patient = validated_data.pop('patient', None)
