@@ -19,9 +19,11 @@ class BloodRequestSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = BloodRequests
-        fields = ['id', 'patient', 'quantity', 'city', 'status', 'priority', 'blood_type', 'requested_at', 'updated_at']
+        fields = ['id', 'patient', 'quantity', 'status', 'priority', 'blood_type', 'requested_at', 'updated_at']
         read_only_fields = ['id', 'requested_at', 'updated_at', 'blood_type', 'priority', 'status']
-
+    def get_city (self,obj):
+        return obj.hospital.user.city.name if obj.hospital and obj.hospital.user and obj.hospital.user.city else None
+        
     def create(self, validated_data):
         patient = validated_data.pop('patient', None)
         if not patient:

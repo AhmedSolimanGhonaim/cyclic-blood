@@ -8,6 +8,7 @@ class StockStatus(models.TextChoices):
     AVAILABLE = 'available', 'Available'
     EXPIRED = 'expired', 'Expired'
     USED = 'used', 'Used'
+    HumanCheckFailed = 'check-failed','Check-Failed'
 
 
 class BloodType(models.TextChoices):

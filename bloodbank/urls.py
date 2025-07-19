@@ -7,7 +7,9 @@ from .views import BloodBankViewSet
 router = DefaultRouter()
 router.register(r'', BloodBankViewSet, basename='bloodbank')
 
-
 urlpatterns = [
-    path('',include(router.urls)),
+    path('', include(router.urls)),
+
+
 ]
+urlpatterns += router.urls

@@ -8,7 +8,7 @@ from hospital.models import Hospital
 import re
 from bloodbank.serializers import BankEmployeeSerializer
 from bloodbank.models import BankEmployee
-
+from city.models import City
 class CustomUserSerializer(serializers.ModelSerializer):
     class Meta: 
         model = CustomUser
@@ -24,6 +24,7 @@ class CustomUserSerializer(serializers.ModelSerializer):
                 "Password must be at least 8 characters long, contain one uppercase letter and one number."
             )
         return value
+
     def create(self, validated_data):
         password = validated_data.pop('password')
         user = CustomUser(**validated_data)
@@ -37,15 +38,30 @@ class RegistrationSerializer(serializers.Serializer):
     donor_profile = DonorSerializer(required=False)
     hospital_profile = HospitalSerializer(required=False)
     bank_employee_profile = BankEmployeeSerializer(required=False)
+    
+    def validate(self, data):
+        # Ensure city is handled as integer ID
+        if 'user' in data and 'city' in data['user']:
+            city_value = data['user']['city']
+            if hasattr(city_value, 'id'):
+                data['user']['city'] = city_value.id
+        return data
+    
     def create(self, validated_data):
         user_data = validated_data.pop('user')
         donor_data = validated_data.pop('donor_profile', None)
         hospital_data = validated_data.pop('hospital_profile', None)
         bank_employee_data = validated_data.pop('bank_employee_profile', None)
 
-        user_serializer = CustomUserSerializer(data=user_data)
-        user_serializer.is_valid(raise_exception=True)
-        user = user_serializer.save()
+        # Create user directly instead of using nested serializer
+        password = user_data.pop('password')
+        city_id = user_data.pop('city', None)
+        
+        user = CustomUser(**user_data)
+        if city_id:
+            user.city = City.objects.get(id=city_id)
+        user.set_password(password)
+        user.save()
 
         if user.role == 'donor' and donor_data:
             Donor.objects.create(user=user, **donor_data)

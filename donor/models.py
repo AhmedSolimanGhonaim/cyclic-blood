@@ -18,6 +18,7 @@ class Donor(models.Model):
     registration_date = models.DateField(auto_now_add=True)
     phone = models.CharField(max_length=20, blank=True)
     total_donations = models.IntegerField(default=0)
+    blood_type = models.CharField(max_length=3, blank=True, null=True, help_text="Blood type is set after first donation and cannot be changed")
     updated_at = models.DateTimeField(auto_now=True)
     
     

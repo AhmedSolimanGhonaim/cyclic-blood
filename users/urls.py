@@ -9,6 +9,7 @@ urlpatterns = [
     path('login/', MyTokenObtainPairView.as_view(), name='token_obtain_pair'),
     path('login/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
     path('login/verify/', TokenVerifyView.as_view(), name='token_verify'),
+    path('profile/', UsersViewSett.as_view({'get': 'me'}), name='user-profile'),
 ]
 
 urlpatterns += router.urls

@@ -5,6 +5,7 @@ from rest_framework.views import APIView
 from rest_framework.permissions import IsAuthenticated, IsAdminUser
 from rest_framework.response import Response
 from rest_framework import status
+from users.permissions import IsHospitalUser
 
 from matchersystem.services import match_blood_request ,batch_match_requests
 
@@ -12,17 +13,13 @@ from matchersystem.services import match_blood_request ,batch_match_requests
 
 
 class BloodRequestCreateView(APIView):
-    permission_classes = [IsAuthenticated]
-    
+    permission_classes = [IsHospitalUser]
     
     def post(self,request):
         """CREATE A BLOOD REQUEST"""
-        hospital = getattr(request.user,'hospital_profile', None)
-        if not hospital : 
-            return Response({"error": "You must be a hospital to create a blood request."}, status=status.HTTP_403_FORBIDDEN)
         serializer= BloodRequestSerializer(data=request.data)
         if serializer.is_valid():
-            blood_request = serializer.save(hospital=hospital)
+            blood_request = serializer.save(hospital=request.user.hospital_profile)
             match_blood_request(blood_request)
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
@@ -31,11 +28,9 @@ class BloodRequestCreateView(APIView):
         
 
 class BloodRequestListView(APIView):
-    #  i added [is authenticated] here since i think we need to allow all users to see the blood requests
-    permission_classes = [IsAuthenticated]
+    permission_classes = [IsHospitalUser]
     def get(self,request):
-        
-        blood_requests = BloodRequests.objects.all()
+        blood_requests = BloodRequests.objects.filter(hospital=request.user.hospital_profile).order_by('-requested_at')
         serializer = BloodRequestSerializer(blood_requests, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
     

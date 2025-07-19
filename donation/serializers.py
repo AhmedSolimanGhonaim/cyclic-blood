@@ -4,22 +4,23 @@ from .models import Donation, DonationStatus
 
 
 class DonationSerializer(serializers.ModelSerializer):
-    bank = serializers.StringRelatedField(read_only=True)
-    donor = serializers.StringRelatedField(read_only=True)
+    bank_name = serializers.CharField(source='bank.name', read_only=True)
+    donor_name = serializers.CharField(source='donor.name', read_only=True)
 
     class Meta:
         model = Donation
         fields = [
-            'id', 'donor', 'donation_date', 'virus_test_result', 'blood_type',
-            'quantity_ml', 'bank', 'status', 'expiration_date', 'rejection_reason'
+            'id', 'donor_name', 'donation_date', 'virus_test_result', 'blood_type',
+            'quantity_ml', 'bank', 'bank_name', 'status', 'expiration_date', 'rejection_reason'
         ]
         read_only_fields = [
-            'id', 'donor', 'donation_date', 'status', 'expiration_date',
-            'rejection_reason', 'virus_test_result', 'bank'
+            'id', 'donor_name', 'donation_date', 'status', 'expiration_date',
+            'rejection_reason', 'virus_test_result', 'bank_name'
         ]
         extra_kwargs = {
             'blood_type': {'required': True},
             'quantity_ml': {'required': True},
+            'bank': {'required': True},
         }
     def create(self, validated_data):
        
