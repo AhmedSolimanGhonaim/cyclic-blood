@@ -28,14 +28,12 @@ def check_expired_stock():
 def simulate_power_outage():
     """Simulate random power outage for demonstration"""
     try:
-        # Get a random blood bank
         blood_banks = BloodBank.objects.all()
         if not blood_banks:
             return "No blood banks available"
         
         blood_bank = random.choice(blood_banks)
         
-        # Get some stock from this blood bank
         affected_stock = Stock.objects.filter(
             blood_bank=blood_bank,
             quantity__gt=0
@@ -43,7 +41,6 @@ def simulate_power_outage():
         
         affected_stock_ids = [stock.id for stock in affected_stock]
         
-        # Simulate power outage duration
         duration = random.randint(2, 8)
         
         alert = NotificationService.handle_power_outage(
@@ -60,14 +57,12 @@ def simulate_power_outage():
 def simulate_storage_failure():
     """Simulate storage equipment failure for demonstration"""
     try:
-        # Get a random blood bank
         blood_banks = BloodBank.objects.all()
         if not blood_banks:
             return "No blood banks available"
         
         blood_bank = random.choice(blood_banks)
         
-        # Get some stock from this blood bank
         affected_stock = Stock.objects.filter(
             blood_bank=blood_bank,
             quantity__gt=0
@@ -75,7 +70,6 @@ def simulate_storage_failure():
         
         affected_stock_ids = [stock.id for stock in affected_stock]
         
-        # Random failure types
         failure_types = [
             "Refrigeration unit malfunction",
             "Temperature sensor failure", 
@@ -123,7 +117,6 @@ def daily_stock_report():
         
         User = get_user_model()
         
-        # Get stock summary by blood bank
         blood_banks = BloodBank.objects.all()
         
         for blood_bank in blood_banks:
@@ -134,7 +127,6 @@ def daily_stock_report():
                 total_quantity=models.Sum('quantity')
             )
             
-            # Create report message
             report_lines = [f"Daily Stock Report for {blood_bank.name}"]
             report_lines.append("=" * 50)
             
@@ -146,19 +138,17 @@ def daily_stock_report():
             
             report_lines.append(f"\nTotal Stock: {total_units}ml")
             
-            # Check for low stock warnings
             low_stock_types = []
             for item in stock_summary:
-                if (item['total_quantity'] or 0) < 1000:  # Less than 1000ml
+                if (item['total_quantity'] or 0) < 1000:  
                     low_stock_types.append(item['blood_type'])
             
             if low_stock_types:
-                report_lines.append(f"\n⚠️  LOW STOCK WARNING:")
+                report_lines.append(f"\n  LOW STOCK WARNING:")
                 report_lines.append(f"Blood types with low stock: {', '.join(low_stock_types)}")
             
             report_message = "\n".join(report_lines)
             
-            # Send to bank employees
             bank_employees = User.objects.filter(
                 role='bank_employee',
                 bank_employee_profile__blood_bank=blood_bank
