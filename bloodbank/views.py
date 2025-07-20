@@ -17,7 +17,7 @@ class BloodBankViewSet(ModelViewSet):
 
     def get_permissions(self):
         if self.action in ['list', 'retrieve']:
-            return [AllowAny()]  # Allow public access for registration
+            return [AllowAny()]  
         if self.action == 'stock':
             return [IsAuthenticatedOrReadOnly()]
         return [IsAdminUser()]

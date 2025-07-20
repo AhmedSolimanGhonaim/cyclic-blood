@@ -39,7 +39,6 @@ class Notification(models.Model):
     created_at = models.DateTimeField(auto_now_add=True,null=True, blank=True)
     read_at = models.DateTimeField(null=True, blank=True)
     
-    # Recipients
     user = models.ForeignKey(
         User,
         on_delete=models.SET_NULL,
@@ -48,7 +47,6 @@ class Notification(models.Model):
         related_name='notifications'
     )
     
-    # Related objects
     donation = models.ForeignKey(
         'donation.Donation',
         on_delete=models.SET_NULL,
@@ -90,7 +88,6 @@ class Notification(models.Model):
         return f"{self.title} - {self.user.username} ({'Read' if self.is_read else 'Unread'})"
 
 class SystemAlert(models.Model):
-    """Model for system-wide alerts like power outages, storage issues"""
     id = models.AutoField(primary_key=True)
     alert_type = models.CharField(
         max_length=20,

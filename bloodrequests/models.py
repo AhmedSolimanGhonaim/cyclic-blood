@@ -1,5 +1,4 @@
 from django.db import models
-# from patient.models import Patient
 
 class BloodRequests(models.Model):
     
@@ -15,7 +14,6 @@ class BloodRequests(models.Model):
         ('normal', 'Normal'),
         ('urgent', 'Urgent')
     ], default='normal')
-    # city = models.models.ForeignKey("hospital.user.city", on_delete=models.SET_NULL)
     updated_at = models.DateTimeField(auto_now=True)
     patient = models.ForeignKey('patient.Patient', on_delete=models.SET_NULL, null=True, blank=True, related_name='blood_requests')
 

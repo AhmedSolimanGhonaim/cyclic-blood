@@ -40,7 +40,6 @@ class RegistrationSerializer(serializers.Serializer):
     bank_employee_profile = BankEmployeeSerializer(required=False)
     
     def validate(self, data):
-        # Ensure city is handled as integer ID
         if 'user' in data and 'city' in data['user']:
             city_value = data['user']['city']
             if hasattr(city_value, 'id'):
@@ -53,7 +52,6 @@ class RegistrationSerializer(serializers.Serializer):
         hospital_data = validated_data.pop('hospital_profile', None)
         bank_employee_data = validated_data.pop('bank_employee_profile', None)
 
-        # Create user directly instead of using nested serializer
         password = user_data.pop('password')
         city_id = user_data.pop('city', None)
         
