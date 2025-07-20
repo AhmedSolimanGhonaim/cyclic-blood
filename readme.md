@@ -378,7 +378,7 @@ POST /api/bloodrequests/     # Create blood request
 
 ### Production Setup
 - **Database**: PostgreSQL 
-- **Task Queue**: Celery with Redis broker
+- **Task Queue**: Celery with rabbitmq broker
 
 
 
