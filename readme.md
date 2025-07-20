@@ -148,8 +148,6 @@ erDiagram
         datetime created_at
         datetime updated_at
     }
-        int quantity_allocated
-    }
     
     %% Relationships
     CITY ||--o{ CUSTOM_USER : "located_in"
