@@ -12,37 +12,6 @@ PRIORITY_ORDER = {
 }
 
 
-def match_blood_request(request):
-    quantity_needed = request.quantity
-    matched_quantity = 0
-    requested_location = request.hospital.user.location if request.hospital and request.hospital.user else None
-    if not requested_location:
-        return 
-    available_stocks = Stock.objects.filter(
-        status=StockStatus.AVAILABLE,
-        blood_type=request.blood_type,
-        donation__expiration_date__gt=timezone.now()
-    ).annotate(distance=Distance('bank__location',requested_location)).order_by('distance','created_at')
-
-    for stock in available_stocks:
-        if quantity_needed <= 0:
-            break
-
-        allocatable = min(stock.quantity, quantity_needed)
-
-        Matcher.objects.create(
-            request_id=request,
-            stock_id=stock,
-            quantity_allocated=allocatable
-        )
-
-        stock.mark_used(allocatable)
-
-        matched_quantity += allocatable
-        quantity_needed -= allocatable
-
-    request.status = 'fulfilled' if matched_quantity >= request.quantity else 'pending'
-    request.save()
 
 def batch_match_requests():
     """Process batch matching for 10+ pending requests based on priority and distance"""
@@ -54,7 +23,6 @@ def batch_match_requests():
             "message": f"At least 10 pending requests are required to process a batch. Currently have {pending_requests.count()} pending requests."
         }
 
-    # Get all available blood banks with their locations for distance calculation
     from bloodbank.models import BloodBank
     blood_banks = BloodBank.objects.filter(location__isnull=False)
     
@@ -64,11 +32,9 @@ def batch_match_requests():
             "message": "No blood banks with location data available for distance calculation."
         }
 
-    # Calculate distance to nearest blood bank for each request and sort by priority + distance
     requests_with_distance = []
     for req in pending_requests:
         if req.hospital and req.hospital.user and req.hospital.user.location:
-            # Find nearest blood bank
             nearest_banks = blood_banks.annotate(
                 distance=Distance('location', req.hospital.user.location)
             ).order_by('distance')[:1]
@@ -87,11 +53,10 @@ def batch_match_requests():
             'requested_at': req.requested_at
         })
     
-    # Sort by priority first, then by distance, then by request time
     sorted_requests = sorted(requests_with_distance, key=lambda x: (
-        x['priority_order'],  # Lower number = higher priority
-        x['distance'],        # Closer distance first
-        x['requested_at']     # Earlier requests first
+        x['priority_order'],  
+        x['distance'],        
+        x['requested_at']     
     ))
 
     matched_results = []
@@ -101,7 +66,6 @@ def batch_match_requests():
     for req_data in sorted_requests:
         req = req_data['request']
         try:
-            # Store original status to check if matching was successful
             original_status = req.status
             match_blood_request(req)
             req.refresh_from_db()
